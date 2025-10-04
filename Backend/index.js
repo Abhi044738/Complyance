@@ -5,7 +5,8 @@ import mongoose from "mongoose";
 import multer from "multer";
 
 import { serverStatusCheck } from "./routes/serverStatusRoute.js";
-import { handleFileUpload } from "./routes/uploadRoute.js";
+import { handleDataAnalysis, handleFileUpload } from "./routes/uploadRoute.js";
+import { getReportById, listReports } from "./routes/reportRoute.js";
 
 dotenv.config();
 const CONFIG = {
@@ -24,6 +25,9 @@ app.use(express.json({ limit: "5mb" }));
 
 app.get("/serverStatus", serverStatusCheck);
 app.post("/upload", uploadMiddleware.single("file"), handleFileUpload);
+app.post("/analyze", handleDataAnalysis);
+app.get("/report/:reportId", getReportById);
+app.get("/reports", listReports);
 
 const startServer = async () => {
   try {

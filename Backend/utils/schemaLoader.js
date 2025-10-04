@@ -6,10 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const loadSchema = () => {
-  const schemaPath = path.resolve(
-    __dirname,
-    "../../../samples/gets_v0_1_schema.json"
-  );
+  const schemaPath = path.resolve(__dirname, "../assets/gets_v0_1_schema.json");
   const rawSchema = fs.readFileSync(schemaPath, "utf8");
   const schemaData = JSON.parse(rawSchema);
   return schemaData.fields.map((field) => field.path);
