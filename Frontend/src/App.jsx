@@ -33,9 +33,7 @@ function App() {
           <Stepper step={step} />
 
           {step === 0 && (
-            <div
-              style={{ maxWidth: "15rem", margin: "0 auto", textAlign: "left" }}
-            >
+            <div className="step-0">
               <label>
                 Country
                 <br />
@@ -57,14 +55,14 @@ function App() {
                   placeholder="SAP"
                 />
               </label>
-              <div style={{ marginTop: 16 }}>
+              <div className="step-0-button">
                 <button onClick={() => setStep(1)}>Next</button>
               </div>
             </div>
           )}
 
           {step === 1 && (
-            <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "left" }}>
+            <div className="step-1">
               <div>
                 <h2>View Report List</h2>
                 <label>
@@ -93,18 +91,19 @@ function App() {
               </div>
               <div>
                 <textarea
+                  className="step-1-textarea"
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Paste CSV or JSON here"
                   rows={10}
-                  style={{ width: "100%", fontFamily: "monospace" }}
                 />
               </div>
-              <div style={{ display: "flex", gap: 8 }}>
+              <div className="step-1-button-div">
                 <button
                   disabled={loading}
                   onClick={() =>
                     doUpload(
+                      form,
                       setError,
                       setLoading,
                       file,
@@ -119,20 +118,26 @@ function App() {
                 </button>
                 <button onClick={() => setStep(0)}>Back</button>
               </div>
-              {error && <p style={{ color: "red" }}>{error}</p>}
+              {error && <p className="error-p">{error}</p>}
             </div>
           )}
 
           {step === 2 && (
-            <div style={{ maxWidth: 960, margin: "0 auto", textAlign: "left" }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div className="step-2">
+              <div className="step-2-div">
                 <div>
                   Upload ID: <code>{uploadId}</code>
                 </div>
                 <button
                   disabled={!uploadId || loading}
                   onClick={() =>
-                    doAnalyze(setError, setLoading, API_BASE, setReport)
+                    doAnalyze(
+                      uploadId,
+                      setError,
+                      setLoading,
+                      API_BASE,
+                      setReport
+                    )
                   }
                 >
                   {loading ? "Analyzing…" : "Analyze"}
@@ -141,7 +146,7 @@ function App() {
               </div>
 
               {report ? (
-                <div style={{ marginTop: 16 }}>
+                <div className="step-2-report">
                   <h2>Table Preview</h2>
                   <TablePreview rows={report.preview || []} />
 
@@ -174,7 +179,7 @@ function App() {
                   )}
 
                   <h2>Actions</h2>
-                  <div style={{ display: "flex", gap: 8 }}>
+                  <div className="step-2-action-div">
                     <button onClick={() => downloadReport(report)}>
                       Download JSON
                     </button>
@@ -200,7 +205,7 @@ function App() {
                 </p>
               )}
 
-              {error && <p style={{ color: "red" }}>{error}</p>}
+              {error && <p className="error-p">{error}</p>}
             </div>
           )}
         </div>

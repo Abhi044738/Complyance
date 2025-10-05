@@ -8,14 +8,14 @@ function ScoreBars({ scores }) {
     ["Overall", scores.overall],
   ];
   return (
-    <div style={{ display: "grid", gap: 8 }}>
+    <div className="score-bar-div">
       {entries.map(([label, val]) => (
         <div key={label}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div className="score-bar-item-div">
             <span>{label}</span>
             <strong>{val}</strong>
           </div>
-          <div style={{ height: 10, background: "#eee" }}>
+          <div className="score-bar-item">
             <div
               style={{
                 width: `${val}%`,

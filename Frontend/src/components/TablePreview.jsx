@@ -8,19 +8,12 @@ function TablePreview({ rows }) {
   );
 
   return (
-    <div style={{ overflowX: "auto" }}>
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+    <div className="table-preview-div">
+      <table className="table-preview">
         <thead>
           <tr>
             {cols.map((c) => (
-              <th
-                key={c}
-                style={{
-                  textAlign: "left",
-                  borderBottom: "1px solid #ddd",
-                  padding: "6px 8px",
-                }}
-              >
+              <th key={c} className="table-preview-col">
                 {c}
               </th>
             ))}
@@ -30,16 +23,8 @@ function TablePreview({ rows }) {
           {rows.slice(0, 20).map((r, idx) => (
             <tr key={idx}>
               {cols.map((c) => (
-                <td
-                  key={c}
-                  style={{
-                    borderBottom: "1px solid #f0f0f0",
-                    padding: "6px 8px",
-                  }}
-                >
-                  <div
-                    style={{ display: "flex", gap: 8, alignItems: "center" }}
-                  >
+                <td key={c} className="table-preview-col">
+                  <div className="table-preview-col-div">
                     <span style={{ fontFamily: "monospace" }}>
                       {String(r[c])}
                     </span>

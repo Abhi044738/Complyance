@@ -2,7 +2,7 @@ function CoveragePanel({ coverage }) {
   if (!coverage) return null;
 
   return (
-    <div style={{ display: "grid", gap: 8 }}>
+    <div className="coverage-panel-div">
       <div>
         <strong>Matched</strong>: {coverage.matched?.length || 0}
       </div>
@@ -13,16 +13,6 @@ function CoveragePanel({ coverage }) {
         <strong>Missing</strong>: {coverage.missing?.length || 0}
       </div>
 
-      {/* {!!coverage.close?.length && (
-        <ul>
-          {coverage.close.map((c, i) => (
-            <li key={i}>
-              {c.candidate} → {c.target} (
-              {Math.round((c.confidence || 0) * 100)}%)
-            </li>
-          ))}
-        </ul>
-      )} */}
       {!!coverage.matched?.length && (
         <details>
           <summary>Show matched</summary>

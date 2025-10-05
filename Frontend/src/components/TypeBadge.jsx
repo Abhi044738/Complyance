@@ -18,16 +18,7 @@ function TypeBadge({ value }) {
   };
 
   return (
-    <span
-      style={{
-        padding: "2px 6px",
-        borderRadius: 6,
-        fontSize: 12,
-        border: "1px solid #ddd",
-        color: "black",
-        background: colors[t],
-      }}
-    >
+    <span className="typebadge" style={{ background: colors[t] }}>
       {t}
     </span>
   );

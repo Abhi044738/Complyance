@@ -1,4 +1,10 @@
-export const doAnalyze = async (setError, setLoading, API_BASE, setReport) => {
+export const doAnalyze = async (
+  uploadId,
+  setError,
+  setLoading,
+  API_BASE,
+  setReport
+) => {
   setError("");
   setLoading(true);
   try {
