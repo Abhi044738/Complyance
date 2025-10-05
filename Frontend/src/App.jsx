@@ -93,7 +93,9 @@ function App() {
           <Stepper step={step} />
 
           {step === 0 && (
-            <div style={{ maxWidth: 640, margin: "0 auto", textAlign: "left" }}>
+            <div
+              style={{ maxWidth: "15rem", margin: "0 auto", textAlign: "left" }}
+            >
               <label>
                 Country
                 <br />
@@ -158,6 +160,7 @@ function App() {
                 <button disabled={!uploadId || loading} onClick={doAnalyze}>
                   {loading ? "Analyzing…" : "Analyze"}
                 </button>
+                <button onClick={() => setStep(1)}>Back</button>
               </div>
 
               {/* Report details only render if report exists */}

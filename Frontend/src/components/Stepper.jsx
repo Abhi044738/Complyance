@@ -6,7 +6,7 @@ function Stepper({ step }) {
         display: "flex",
         gap: 12,
         justifyContent: "center",
-        marginBottom: 24,
+        marginBottom: "3rem",
       }}
     >
       {steps.map((label, idx) => (

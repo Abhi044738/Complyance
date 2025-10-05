@@ -56,14 +56,7 @@ const findBestMatch = (targetPath, fieldMapping, firstRow, usedFields) => {
   for (const [normalizedKey, originalKey] of fieldMapping.entries()) {
     if (usedFields.has(originalKey)) continue;
     if (!isTypeCompatible(targetPath, firstRow[originalKey])) continue;
-    console.log(
-      "normalizedKey - ",
-      normalizedKey,
-      "normalizedTarget - ",
-      normalizedTarget,
-      "originalKey -",
-      originalKey
-    );
+
     if (originalKey === targetPath) {
       exactMatch = originalKey;
       break;

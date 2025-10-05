@@ -1,4 +1,8 @@
 import Report from "../models/Report.js";
+import {
+  renderReportHtml,
+  renderReportListHtml,
+} from "../utils/renderReport.js";
 
 export const getReportById = async (req, res) => {
   try {
@@ -8,7 +12,14 @@ export const getReportById = async (req, res) => {
       return res.status(404).json({ error: "report_not_found" });
     }
 
-    return res.json(report.reportJson);
+    const reportJson = report.reportJson || report;
+
+    if (req.accepts("html")) {
+      const html = renderReportHtml(reportJson);
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.send(html);
+    }
+    return res.json(reportJson);
   } catch (error) {
     return res.status(500).json({
       error: "fetch_report_failed",
@@ -34,6 +45,12 @@ export const listReports = async (req, res) => {
       createdAt: report.createdAt,
       overall: report.scoresOverall,
     }));
+
+    if (req.accepts("html")) {
+      const html = renderReportListHtml(reportList);
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.send(html);
+    }
 
     return res.json(reportList);
   } catch (error) {
