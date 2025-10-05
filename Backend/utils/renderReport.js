@@ -14,8 +14,9 @@ export const renderReportListHtml = (reportList = []) => {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reports</title>
   <style>
-    body{font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial; padding:20px; color:#111}
-    .card{border:1px solid #e6e6e6;border-radius:8px;padding:12px;margin:8px 0}
+    body{font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial; padding:20px;background-color: #242424; color:rgba(255, 255, 255, 0.87)}
+    .card{ background-color:#1a1a1a;border-radius:8px;padding:12px;margin:8px 0}
+    .card:hover{border:1px solid #e6e6e6;}
     a { color: #0366d6; text-decoration: none }
     a:hover { text-decoration: underline }
     .meta { color:#6b7280; font-size:0.9rem }
@@ -70,14 +71,14 @@ export const renderReportHtml = (reportJson) => {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Report ${escapeHtml(reportJson.reportId || "")}</title>
   <style>
-    body{font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial; padding:20px; color:#111}
+    body{background-color: #242424;color:rgba(255, 255, 255, 0.87);font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial; padding:20px; }
     h1,h2{margin:8px 0}
     .grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
     .card{border:1px solid #e6e6e6;border-radius:8px;padding:12px}
     table{width:100%;border-collapse:collapse;font-size:0.9rem}
     th,td{padding:8px;border-bottom:1px solid #f0f0f0;text-align:left}
     .small{font-size:0.9rem;color:#6b7280}
-    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3f4f6;border:1px solid #e5e7eb;font-size:0.8rem}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#111827;font-size:0.8rem}
     pre{background:#0f172a;color:#fff;padding:12px;border-radius:6px;overflow:auto}
     a.button{display:inline-block;padding:8px 12px;border-radius:6px;background:#111827;color:#fff;text-decoration:none}
   </style>
@@ -97,23 +98,10 @@ export const renderReportHtml = (reportJson) => {
     </div>
   </header>
 
-  <section class="grid" style="margin-top:12px">
+  <section class="grid" style="margin-top:1rem">
     <div>
-      <div class="card">
-        <h2>Scores</h2>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          ${Object.entries(scores)
-            .map(
-              ([k, v]) =>
-                `<div><div class="pill">${escapeHtml(k)}: <strong>${escapeHtml(
-                  String(v ?? "—")
-                )}</strong></div></div>`
-            )
-            .join("")}
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
+      
+      <div class="card" >
         <h2>Preview (top ${Math.min(previewRows.length, 20)})</h2>
         ${
           previewRows.length === 0
@@ -137,7 +125,64 @@ export const renderReportHtml = (reportJson) => {
         }
       </div>
 
-      <div class="card" style="margin-top:12px">
+      <div class="card" style="margin-top:1rem">
+        <h2>Raw JSON</h2>
+        <pre>${prettyJson}</pre>
+    </div>
+    </div>
+    
+
+    <aside>
+    <div class="card" >
+        <h2>Scores</h2>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          ${Object.entries(scores)
+            .map(
+              ([k, v]) =>
+                `<div><div class="pill">${escapeHtml(k)}: <strong>${escapeHtml(
+                  String(v ?? "—")
+                )}</strong></div></div>`
+            )
+            .join("")}
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        <h2>Coverage</h2>
+        <div class="small">Matched: ${escapeHtml(
+          String(coverage.matched?.length || 0)
+        )}</div>
+        <div class="small">Close: ${escapeHtml(
+          String(coverage.close?.length || 0)
+        )}</div>
+        <div class="small">Missing: ${escapeHtml(
+          String(coverage.missing?.length || 0)
+        )}</div>
+
+        ${
+          coverage.close?.length
+            ? `<details style="margin-top:8px"><summary>Close matches</summary><ul>${coverage.close
+                .map(
+                  (c) =>
+                    `<li>${escapeHtml(c.candidate || "")} → ${escapeHtml(
+                      c.target || ""
+                    )} </li>`
+                )
+                .join("")}</ul></details>`
+            : ""
+        }
+
+        ${
+          coverage.missing?.length
+            ? `<details style="margin-top:8px"><summary>Missing fields</summary><ul>${coverage.missing
+                .map((m) => `<li>${escapeHtml(m)}</li>`)
+                .join("")}</ul></details>`
+            : ""
+        }
+
+      </div>
+
+      <div class="card" style="margin-top:1rem">
         <h2>Rule Findings</h2>
         ${
           ruleFindings.length === 0
@@ -158,49 +203,8 @@ export const renderReportHtml = (reportJson) => {
                 .join("")}</ul>`
         }
       </div>
-    </div>
-
-    <aside>
-      <div class="card">
-        <h2>Coverage</h2>
-        <div class="small">Matched: ${escapeHtml(
-          String(coverage.matched?.length || 0)
-        )}</div>
-        <div class="small">Close: ${escapeHtml(
-          String(coverage.close?.length || 0)
-        )}</div>
-        <div class="small">Missing: ${escapeHtml(
-          String(coverage.missing?.length || 0)
-        )}</div>
-
-        ${
-          coverage.close?.length
-            ? `<details style="margin-top:8px"><summary>Close matches</summary><ul>${coverage.close
-                .map(
-                  (c) =>
-                    `<li>${escapeHtml(c.candidate || "")} → ${escapeHtml(
-                      c.target || ""
-                    )} (${Math.round((c.confidence || 0) * 100)}%)</li>`
-                )
-                .join("")}</ul></details>`
-            : ""
-        }
-
-        ${
-          coverage.missing?.length
-            ? `<details style="margin-top:8px"><summary>Missing fields</summary><ul>${coverage.missing
-                .map((m) => `<li>${escapeHtml(m)}</li>`)
-                .join("")}</ul></details>`
-            : ""
-        }
-
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h2>Raw JSON</h2>
-        <pre>${prettyJson}</pre>
-      </div>
     </aside>
+    
   </section>
 </body>
 </html>`;

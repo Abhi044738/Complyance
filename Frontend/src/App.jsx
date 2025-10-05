@@ -18,6 +18,11 @@ function App() {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [reportNo, setReportNo] = useState(10);
+
+  const handleReportView = (reportNo, API_BASE) => {
+    window.open(`${API_BASE}/reports?limit=${reportNo}`, "_blank");
+  };
 
   return (
     <>
@@ -60,6 +65,25 @@ function App() {
 
           {step === 1 && (
             <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "left" }}>
+              <div>
+                <h2>View Report List</h2>
+                <label>
+                  Enter the no of report <br />
+                  <br />
+                  <input
+                    type="number"
+                    value={reportNo}
+                    onChange={(event) => setReportNo(event.target.value)}
+                  />
+                </label>
+                <br />
+                <br />
+                <button onClick={() => handleReportView(reportNo, API_BASE)}>
+                  View Reort List
+                </button>
+                <br />
+                <br />
+              </div>
               <div>
                 <input
                   type="file"
