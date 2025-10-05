@@ -4,6 +4,9 @@ import Stepper from "./components/Stepper";
 import TablePreview from "./components/TablePreview";
 import ScoreBars from "./components/ScoreBars";
 import CoveragePanel from "./components/CoveragePanel";
+import { downloadReport } from "./utils/download";
+import { doAnalyze } from "./utils/analysis";
+import { doUpload } from "./utils/upload";
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 function App() {
@@ -15,74 +18,6 @@ function App() {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  async function doUpload() {
-    setError("");
-    setLoading(true);
-    try {
-      let res;
-      if (file) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("country", form.country);
-        fd.append("erp", form.erp);
-        res = await fetch(`${API_BASE}/upload`, { method: "POST", body: fd });
-      } else if (text.trim()) {
-        res = await fetch(`${API_BASE}/upload`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text, country: form.country, erp: form.erp }),
-        });
-      } else {
-        setError("Provide a file or paste text");
-        setLoading(false);
-        return;
-      }
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Upload failed");
-      setUploadId(json.uploadId);
-      setStep(2);
-    } catch (e) {
-      setError(String(e.message || e));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function doAnalyze() {
-    setError("");
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE}/analyze`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          uploadId,
-          questionnaire: { webhooks: true, sandbox_env: true, retries: false },
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Analyze failed");
-      setReport(json);
-    } catch (e) {
-      setError(String(e.message || e));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function downloadReport() {
-    if (!report) return;
-    const blob = new Blob([JSON.stringify(report, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `report_${report.reportId}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
 
   return (
     <>
@@ -142,7 +77,20 @@ function App() {
                 />
               </div>
               <div style={{ display: "flex", gap: 8 }}>
-                <button disabled={loading} onClick={doUpload}>
+                <button
+                  disabled={loading}
+                  onClick={() =>
+                    doUpload(
+                      setError,
+                      setLoading,
+                      file,
+                      API_BASE,
+                      text,
+                      setUploadId,
+                      setStep
+                    )
+                  }
+                >
                   {loading ? "Uploading…" : "Upload"}
                 </button>
                 <button onClick={() => setStep(0)}>Back</button>
@@ -157,13 +105,17 @@ function App() {
                 <div>
                   Upload ID: <code>{uploadId}</code>
                 </div>
-                <button disabled={!uploadId || loading} onClick={doAnalyze}>
+                <button
+                  disabled={!uploadId || loading}
+                  onClick={() =>
+                    doAnalyze(setError, setLoading, API_BASE, setReport)
+                  }
+                >
                   {loading ? "Analyzing…" : "Analyze"}
                 </button>
                 <button onClick={() => setStep(1)}>Back</button>
               </div>
 
-              {/* Report details only render if report exists */}
               {report ? (
                 <div style={{ marginTop: 16 }}>
                   <h2>Table Preview</h2>
@@ -199,7 +151,9 @@ function App() {
 
                   <h2>Actions</h2>
                   <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={downloadReport}>Download JSON</button>
+                    <button onClick={() => downloadReport(report)}>
+                      Download JSON
+                    </button>
                     <button
                       onClick={() => {
                         if (API_BASE && report.reportId) {
